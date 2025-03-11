@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stopwatch</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            margin: 50px;
+            background-image: url("bg.jpg");
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            color: #fff;
+        }
+        
+        h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+            color: #1eff00;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+        }
+
+        .hero {
+            display: inline-block;
+            padding: 20px;
+            border-radius: 15px;
+            background: url('watchbg.jpg') no-repeat center center;
+            background-size: cover;
+            box-shadow: 0px 0px 15px rgba(255, 255, 255, 0.3);
+        }
+
+        .counter {
+            font-size: 2.5em;
+            margin: 20px auto;
+            padding: 15px;
+            width: 300px;
+            border-radius: 15px;
+            border: 2px solid #fff;
+            background: rgba(0, 0, 0, 0.6);
+            color: #0bf517;
+            box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.3);
+        }
+
+        button {
+            font-size: 1.2em;
+            margin: 10px;
+            padding: 10px 20px;
+            cursor: pointer;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(45deg, #00c6ff, #0072ff);
+            color: white;
+            transition: 0.3s;
+        }
+        
+        button:hover {
+            background: linear-gradient(45deg, #ff00f2, #00c6ff);
+            transform: scale(1.05);
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        li {
+            font-size: 1.5em;
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid #d4cece;
+            background-color: rgba(255, 255, 255, 0.2);
+            margin: 5px auto;
+            width: 250px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+         
+        .erase-btn {
+            font-size: 0.8em;
+            padding: 5px 10px;
+            background: rgb(255, 4, 4);
+            color: rgb(206, 189, 189);
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .erase-btn:hover {
+            background: rgb(221, 85, 85);
+        }
+        @media (max-width: 768px) {
+            .hero {
+                width: 90%;
+            }
+        }
+        
+    </style>
+</head>
+  
+<body>
+    <h1>Stopwatch</h1>
+    <div class="hero">
+        <div class="counter">00:00:00</div>
+        <button onclick="startStopwatch()">Start</button>
+        <button onclick="pauseStopwatch()">Pause</button>
+        <button onclick="resetStopwatch()">Reset</button>
+        <button onclick="recordLap()">Lap</button>
+    </div>
+    <ul id="laps"></ul>
+    
+    <script>
+        let timer;
+        let startTime;
+        let elapsedTime = 0;
+        let running = false;
+       // let lapTime = 0;
+        function update() {
+            const time = Date.now() - startTime + elapsedTime;
+            const seconds = Math.floor((time / 1000) % 60);
+            const minutes = Math.floor((time / 1000 / 60) % 60);
+            const hours = Math.floor(time / 1000 / 60 / 60);
+            document.querySelector(".counter").innerText =
+                `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+         // Start, Pause, Reset, Lap
+        function startStopwatch() {
+            if (!running) {
+                startTime = Date.now();
+                timer = setInterval(update, 1000);
+                running = true;
+            }
+        }
+        //the function to Pause the stopwatch
+        function pauseStopwatch() {
+            if (running) {
+                clearInterval(timer);
+                elapsedTime += Date.now() - startTime;
+                running = false;
+            }
+        }
+     //the function to Reset the stopwatch
+        function resetStopwatch() {
+            clearInterval(timer);
+            elapsedTime = 0;
+            running = false;
+            document.querySelector(".counter").innerText = "00:00:00";
+            document.getElementById("laps").innerHTML = "";
+        }
+    //the function to record the lap
+        function recordLap() {
+            if (running) {
+                const lapTime = document.querySelector(".counter").innerText;
+                const lapItem = document.createElement("li");
+                lapItem.textContent = lapTime;
+             // Create a delete button
+                const deleteButton = document.createElement("button");
+                deleteButton.textContent = "X";
+                deleteButton.classList.add("erase-btn");
+                deleteButton.onclick = function () {
+                    lapItem.remove();
+                };
+                     // Append the delete button to the lap item
+                lapItem.appendChild(deleteButton);
+                document.getElementById("laps").appendChild(lapItem);
+            }
+        }
+    </script>
+</body>
+</html>
